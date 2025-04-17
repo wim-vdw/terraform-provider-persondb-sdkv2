@@ -1,1 +1,4 @@
 .idea
+.terraform*
+*tfstate*
+.DS_Store
