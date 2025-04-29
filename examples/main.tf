@@ -1,6 +1,8 @@
-provider "myprovider" {}
+provider "myprovider" {
+  database_filename = "db.json"
+}
 
-resource "myprovider_dashboard" "example" {
-  name        = "example-dashboard"
-  description = "This is an example dashboard."
+resource "myprovider_person" "wim" {
+  name_id = "1"
+  name    = "Wim"
 }
