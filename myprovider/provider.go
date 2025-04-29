@@ -29,12 +29,13 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	var diags diag.Diagnostics
 	c := &Client{
 		CustomDatabase: d.Get("database_filename").(string),
+		Persons:        make(map[string]string),
 	}
 	_, err := os.ReadFile(c.CustomDatabase)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "Unable to create Database client",
+			Summary:  "unable to create database client",
 			Detail:   err.Error(),
 		})
 		return nil, diags

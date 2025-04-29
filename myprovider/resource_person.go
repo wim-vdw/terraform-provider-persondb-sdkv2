@@ -29,6 +29,15 @@ func resourcePerson() *schema.Resource {
 
 func resourcePersonCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
+	err := m.(*Client).AddPerson(d.Get("name_id").(string), d.Get("name").(string))
+	if err != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "unable to create person",
+			Detail:   err.Error(),
+		})
+		return diags
+	}
 	d.SetId("/person/" + d.Get("name_id").(string))
 	return diags
 }
