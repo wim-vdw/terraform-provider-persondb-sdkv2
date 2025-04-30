@@ -29,7 +29,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	var diags diag.Diagnostics
 	c := &Client{
 		CustomDatabase: d.Get("database_filename").(string),
-		Persons:        make(map[string]string),
+		Persons:        make(map[string]Person),
 	}
 	_, err := os.ReadFile(c.CustomDatabase)
 	if err != nil {
