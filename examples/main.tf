@@ -3,6 +3,7 @@ provider "myprovider" {
 }
 
 resource "myprovider_person" "wim" {
-  name_id = "1"
-  name    = "Wim"
+  name_id    = "1"
+  last_name  = "Van den Wyngaert"
+  first_name = "Wim"
 }
