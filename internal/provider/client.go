@@ -2,6 +2,7 @@ package provider
 
 import (
 	"database/sql"
+	"errors"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -76,9 +77,16 @@ func (c *Client) deletePerson(personID string) error {
 		return err
 	}
 	defer db.Close()
-	_, err = db.Exec("DELETE FROM persons WHERE person_id = ?", personID)
+	result, err := db.Exec("DELETE FROM persons WHERE person_id = ?", personID)
 	if err != nil {
 		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("person not found in the database")
 	}
 	return nil
 }
