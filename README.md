@@ -1,7 +1,7 @@
 # Test provider based on Terraform Plugin SDKv2
 
 This repository demonstrates the implementation of a custom Terraform provider using the Terraform Plugin SDKv2.  
-The provider interacts with a simple SQLite database to manage "person" resources, showcasing key features of Terraform
+The provider interacts with a simple SQLite database to manage `person` resources, showcasing key features of Terraform
 provider development.
 
 ## Features
