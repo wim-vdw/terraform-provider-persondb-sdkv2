@@ -58,13 +58,13 @@ Run the local development tests (data will be persisted in the SQLite database `
 # Run a plan to see the changes
 terraform plan
 
-# Create the resource and check results
+# Create the resource and check the results
 terraform apply -auto-approve
 terraform show
 terraform state list
 
-# After deleting the state file and keeping the data in the SQLite database, you can import the existing resource
-rm terraform.tfstate*
+# After removing the item from state and keeping the resource in the SQLite database, you can re-import it
+terraform state rm persondb_person.wim
 terraform plan
 terraform apply -auto-approve
 terraform import 'persondb_person.wim' '/person/1'
