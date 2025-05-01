@@ -43,6 +43,33 @@ func (c *Client) createPerson(personID, lastName, firstName string) error {
 	return nil
 }
 
+func (c *Client) readPerson(personID string) (string, string, error) {
+	db, err := sql.Open("sqlite3", c.CustomDatabase)
+	if err != nil {
+		return "", "", err
+	}
+	defer db.Close()
+	var lastName, firstName string
+	err = db.QueryRow("SELECT last_name, first_name FROM persons WHERE person_id = ?", personID).Scan(&lastName, &firstName)
+	if err != nil {
+		return "", "", err
+	}
+	return lastName, firstName, nil
+}
+
+func (c *Client) updatePerson(personID, lastName, firstName string) error {
+	db, err := sql.Open("sqlite3", c.CustomDatabase)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	_, err = db.Exec("UPDATE persons SET last_name = ?, first_name = ? WHERE person_id = ?", lastName, firstName, personID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *Client) deletePerson(personID string) error {
 	db, err := sql.Open("sqlite3", c.CustomDatabase)
 	if err != nil {
