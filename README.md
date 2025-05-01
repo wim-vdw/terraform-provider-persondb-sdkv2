@@ -1,2 +1,1 @@
-# terraform-provider-persondb
-terraform-provider-persondb
+# Test provider based on Terraform Plugin SDKv2
