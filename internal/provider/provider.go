@@ -1,4 +1,4 @@
-package myprovider
+package provider
 
 import (
 	"context"
@@ -17,7 +17,7 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"myprovider_person": resourcePerson(),
+			"persondb_person": resourcePerson(),
 		},
 		DataSourcesMap:       map[string]*schema.Resource{},
 		ConfigureContextFunc: providerConfigure,

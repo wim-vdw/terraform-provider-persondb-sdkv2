@@ -1,4 +1,4 @@
-module github.com/wim-vdw/terraform-provider-myprovider
+module github.com/wim-vdw/terraform-provider-persondb
 
 go 1.24
 

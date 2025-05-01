@@ -1,4 +1,4 @@
-package myprovider
+package provider
 
 import (
 	"context"

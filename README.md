@@ -1,2 +1,2 @@
-# terraform-provider-myprovider
-terraform-provider-myprovider
+# terraform-provider-persondb
+terraform-provider-persondb
