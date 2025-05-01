@@ -90,3 +90,17 @@ func (c *Client) deletePerson(personID string) error {
 	}
 	return nil
 }
+
+func (c *Client) checkPersonExists(personID string) (bool, error) {
+	db, err := sql.Open("sqlite3", c.CustomDatabase)
+	if err != nil {
+		return false, err
+	}
+	defer db.Close()
+	var exists bool
+	err = db.QueryRow("SELECT EXISTS(SELECT 1 FROM persons WHERE person_id = ?)", personID).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
+}

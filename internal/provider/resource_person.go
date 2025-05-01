@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -28,6 +29,9 @@ func resourcePerson() *schema.Resource {
 				Optional: true,
 			},
 		},
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 
@@ -37,7 +41,24 @@ func resourcePersonCreate(ctx context.Context, d *schema.ResourceData, m interfa
 	personID := d.Get("person_id").(string)
 	lastName := d.Get("last_name").(string)
 	firstName := d.Get("first_name").(string)
-	err := client.createPerson(personID, lastName, firstName)
+	exists, err := client.checkPersonExists(personID)
+	if err != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "unable to create person",
+			Detail:   err.Error(),
+		})
+		return diags
+	}
+	if exists {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "person already exists",
+			Detail:   "Person with person_id '" + personID + "' already exists. Use 'terraform import' to manage it in Terraform.",
+		})
+		return diags
+	}
+	err = client.createPerson(personID, lastName, firstName)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -53,12 +74,17 @@ func resourcePersonCreate(ctx context.Context, d *schema.ResourceData, m interfa
 func resourcePersonRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	client := m.(*Client)
-	personID := d.Get("person_id").(string)
+	parts := strings.Split(d.Id(), "/")
+	if len(parts) != 3 || parts[1] != "person" {
+		return diag.Errorf("invalid ID format: expected '/person/<person_id>', got: %s", d.Id())
+	}
+	personID := parts[2]
 	lastName, firstName, err := client.readPerson(personID)
 	if err != nil {
 		// Person could not be found, so we set the ID to empty
 		d.SetId("")
 	}
+	d.Set("person_id", personID)
 	d.Set("last_name", lastName)
 	d.Set("first_name", firstName)
 	return diags
