@@ -52,10 +52,14 @@ $env:TF_CLI_CONFIG_FILE="terraformrc-local-dev"
 
 > **ATTENTION:** You do not need to run `terraform init` as the local development build will be used automatically now.
 
-Run the local development tests:
+Run the local development tests (data will be persisted in the SQLite database `persons.db`):
 
 ```bash
 terraform plan
 terraform apply
 terraform destroy
 ```
+
+Changing the person_id in the `main.tf` file will trigger a recreation of the resource.  
+You can also change the `last_name` or `first_name` attributes to see how the provider handles updates.  
+You can also make changes directly in the SQLite database to see how the provider handles drift detection.
