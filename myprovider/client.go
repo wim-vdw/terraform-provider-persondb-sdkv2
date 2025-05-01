@@ -1,66 +1,55 @@
 package myprovider
 
 import (
-	"encoding/json"
-	"errors"
-	"os"
-	"sync"
-)
+	"database/sql"
 
-type Person struct {
-	LastName  string `json:"last_name"`
-	FirstName string `json:"first_name"`
-}
+	_ "github.com/mattn/go-sqlite3"
+)
 
 type Client struct {
 	CustomDatabase string
-	Persons        map[string]Person
 }
 
-var databaseLock = sync.Mutex{}
-
-func (c *Client) AddPerson(nameID string, lastName, firstName string) error {
-	if _, exists := c.Persons[nameID]; exists {
-		return errors.New("a person with the same name_id already exists")
-	}
-	databaseLock.Lock()
-	defer databaseLock.Unlock()
-	c.Persons[nameID] = Person{
-		LastName:  lastName,
-		FirstName: firstName,
-	}
-	return nil
-}
-
-func (c *Client) GetPerson(nameID string) (Person, error) {
-	if person, exists := c.Persons[nameID]; exists {
-		return person, nil
-	}
-	return Person{}, errors.New("person not found")
-}
-
-func (c *Client) LoadDB() error {
-	databaseLock.Lock()
-	defer databaseLock.Unlock()
-	data, err := os.ReadFile(c.CustomDatabase)
+func (c *Client) initDB() error {
+	db, err := sql.Open("sqlite3", c.CustomDatabase)
 	if err != nil {
 		return err
 	}
-	err = json.Unmarshal(data, &c.Persons)
+	defer db.Close()
+	sqlStmt := `
+	CREATE TABLE IF NOT EXISTS persons (
+		person_id TEXT NOT NULL PRIMARY KEY,
+		last_name TEXT NOT NULL,
+		first_name TEXT
+	);
+	`
+	_, err = db.Exec(sqlStmt)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Client) SaveDB() error {
-	databaseLock.Lock()
-	defer databaseLock.Unlock()
-	data, err := json.MarshalIndent(c.Persons, "", "  ")
+func (c *Client) createPerson(personID, lastName, firstName string) error {
+	db, err := sql.Open("sqlite3", c.CustomDatabase)
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(c.CustomDatabase, data, 0644)
+	defer db.Close()
+	_, err = db.Exec("INSERT INTO persons (person_id, last_name, first_name) VALUES (?, ?, ?)", personID, lastName, firstName)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Client) deletePerson(personID string) error {
+	db, err := sql.Open("sqlite3", c.CustomDatabase)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	_, err = db.Exec("DELETE FROM persons WHERE person_id = ?", personID)
 	if err != nil {
 		return err
 	}

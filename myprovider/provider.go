@@ -2,7 +2,6 @@ package myprovider
 
 import (
 	"context"
-	"os"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -29,13 +28,12 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	var diags diag.Diagnostics
 	c := &Client{
 		CustomDatabase: d.Get("database_filename").(string),
-		Persons:        make(map[string]Person),
 	}
-	_, err := os.ReadFile(c.CustomDatabase)
+	err := c.initDB()
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "unable to create database client",
+			Summary:  "unable to initialize database",
 			Detail:   err.Error(),
 		})
 		return nil, diags

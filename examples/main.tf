@@ -1,9 +1,9 @@
 provider "myprovider" {
-  database_filename = "db.json"
+  database_filename = "persons.db"
 }
 
 resource "myprovider_person" "wim" {
-  name_id    = "1"
+  person_id  = "1"
   last_name  = "Van den Wyngaert"
   first_name = "Wim"
 }
