@@ -32,7 +32,7 @@ go build -o local_dev_build/terraform-provider-persondb
 go build -o local_dev_build/terraform-provider-persondb.exe
 ```
 
-## Run the local development tests
+## Run the local development tests with the Terraform CLI
 
 Make sure you are located in the `examples` directory.  
 File `terraformrc-local-dev` contains the Terraform CLI dev configuration overrides for the local development tests.  
