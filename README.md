@@ -14,3 +14,48 @@ provider development.
 
 This project is designed for learning purposes and provides a hands-on example of how to build and test a Terraform
 provider.
+
+## Create a development build for local testing of the provider
+
+Create directory `local_dev_build` in the `root` of this repository when it does not exist.  
+The directory `local_dev_build` is used to store the local build artifacts and is excluded via `.gitignore`.
+
+Create a local development build:
+
+```bash
+go mod tidy
+
+# Linux
+go build -o local_dev_build/terraform-provider-persondb
+
+# Windows
+go build -o local_dev_build/terraform-provider-persondb.exe
+```
+
+## Run the local development tests
+
+Make sure you are located in the `examples` directory.  
+File `terraformrc-local-dev` contains the Terraform CLI dev configuration overrides for the local development tests.  
+File `main.tf` contains the Terraform configuration for the local development tests.
+
+Activate the local development build tests by setting the `TF_CLI_CONFIG_FILE` environment variable to point to the
+`terraformrc-local-dev` file:
+
+```bash
+# Linux
+export TF_CLI_CONFIG_FILE="terraformrc-local-dev"
+
+# Windows
+$env:TF_CLI_CONFIG_FILE="terraformrc-local-dev"
+
+```
+
+> **ATTENTION:** You do not need to run `terraform init` as the local development build will be used automatically now.
+
+Run the local development tests:
+
+```bash
+terraform plan
+terraform apply
+terraform destroy
+```
