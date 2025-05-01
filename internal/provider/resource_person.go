@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -18,11 +17,11 @@ func resourcePerson() *schema.Resource {
 			"person_id": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"last_name": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
 			"first_name": {
 				Type:     schema.TypeString,
@@ -34,7 +33,6 @@ func resourcePerson() *schema.Resource {
 
 func resourcePersonCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	tflog.Info(ctx, "*** function resourcePersonCreate called ***")
 	client := m.(*Client)
 	personID := d.Get("person_id").(string)
 	lastName := d.Get("last_name").(string)
@@ -54,19 +52,38 @@ func resourcePersonCreate(ctx context.Context, d *schema.ResourceData, m interfa
 
 func resourcePersonRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	tflog.Info(ctx, "*** function resourcePersonRead called ***")
+	client := m.(*Client)
+	personID := d.Get("person_id").(string)
+	lastName, firstName, err := client.readPerson(personID)
+	if err != nil {
+		// Person could not be found, so we set the ID to empty
+		d.SetId("")
+	}
+	d.Set("last_name", lastName)
+	d.Set("first_name", firstName)
 	return diags
 }
 
 func resourcePersonUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	tflog.Info(ctx, "*** function resourcePersonUpdate called ***")
+	client := m.(*Client)
+	personID := d.Get("person_id").(string)
+	lastName := d.Get("last_name").(string)
+	firstName := d.Get("first_name").(string)
+	err := client.updatePerson(personID, lastName, firstName)
+	if err != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "unable to update person",
+			Detail:   err.Error(),
+		})
+		return diags
+	}
 	return diags
 }
 
 func resourcePersonDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	tflog.Info(ctx, "*** function resourcePersonDelete called ***")
 	client := m.(*Client)
 	personID := d.Get("person_id").(string)
 	err := client.deletePerson(personID)
