@@ -29,7 +29,6 @@ go mod tidy
 go build -o local_dev_build/terraform-provider-persondb
 
 # Windows (go-sqlite3 package requires CGO to be enabled -> gcc.exe must be installed)
-go build -o local_dev_build/terraform-provider-persondb.exe
 $env:CGO_ENABLED=1; go build -o local_dev_build/terraform-provider-persondb.exe
 ```
 
