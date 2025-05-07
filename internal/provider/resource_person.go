@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -37,6 +38,7 @@ func resourcePerson() *schema.Resource {
 
 func resourcePersonCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
+	tflog.Info(ctx, "***** func resourcePersonCreate *****")
 	client := m.(*Client)
 	personID := d.Get("person_id").(string)
 	lastName := d.Get("last_name").(string)
@@ -73,6 +75,7 @@ func resourcePersonCreate(ctx context.Context, d *schema.ResourceData, m interfa
 
 func resourcePersonRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
+	tflog.Info(ctx, "***** func resourcePersonRead *****")
 	client := m.(*Client)
 	parts := strings.Split(d.Id(), "/")
 	if len(parts) != 3 || parts[1] != "person" {
@@ -92,6 +95,7 @@ func resourcePersonRead(ctx context.Context, d *schema.ResourceData, m interface
 
 func resourcePersonUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
+	tflog.Info(ctx, "***** func resourcePersonUpdate *****")
 	client := m.(*Client)
 	personID := d.Get("person_id").(string)
 	lastName := d.Get("last_name").(string)
@@ -110,6 +114,7 @@ func resourcePersonUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 
 func resourcePersonDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
+	tflog.Info(ctx, "***** func resourcePersonDelete *****")
 	client := m.(*Client)
 	personID := d.Get("person_id").(string)
 	err := client.deletePerson(personID)
