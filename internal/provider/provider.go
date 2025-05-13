@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -20,7 +21,9 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"persondb_person": resourcePerson(),
 		},
-		DataSourcesMap:       map[string]*schema.Resource{},
+		DataSourcesMap: map[string]*schema.Resource{
+			"persondb_person": dataSourcePerson(),
+		},
 		ConfigureContextFunc: providerConfigure,
 	}
 }
