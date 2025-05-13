@@ -7,3 +7,7 @@ resource "persondb_person" "wim" {
   last_name  = "Van den Wyngaert"
   first_name = "Wim"
 }
+
+data "persondb_person" "bill" {
+  person_id  = "10"
+}
