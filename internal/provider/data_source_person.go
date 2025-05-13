@@ -35,12 +35,7 @@ func dataSourcePersonRead(ctx context.Context, d *schema.ResourceData, m interfa
 	personID := d.Get("person_id").(string)
 	lastName, firstName, err := client.readPerson(personID)
 	if err != nil {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "unable to read person",
-			Detail:   err.Error(),
-		})
-		return diags
+		return diag.Errorf("unable to read person with person_id '%s' from the database", personID)
 	}
 	d.SetId("/person/" + personID)
 	d.Set("last_name", lastName)
