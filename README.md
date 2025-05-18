@@ -52,6 +52,21 @@ $env:TF_CLI_CONFIG_FILE="terraformrc-local-dev"
 
 > **ATTENTION:** You do not need to run `terraform init` as the local development build will be used automatically now.
 
+Example:
+
+```hcl
+provider "persondb" {
+  database_filename = "persons.db"
+}
+
+resource "persondb_person" "wim" {
+  person_id  = "1"
+  last_name  = "Van den Wyngaert"
+  first_name = "Wim"
+}
+
+```
+
 Run the local development tests (data will be persisted in the SQLite database `persons.db`):
 
 ```bash
