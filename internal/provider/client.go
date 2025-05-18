@@ -11,6 +11,17 @@ type Client struct {
 	CustomDatabase string
 }
 
+func NewClient(databaseFilename string) (*Client, error) {
+	c := &Client{
+		CustomDatabase: databaseFilename,
+	}
+	err := c.initDB()
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
 func (c *Client) initDB() error {
 	db, err := sql.Open("sqlite3", c.CustomDatabase)
 	if err != nil {

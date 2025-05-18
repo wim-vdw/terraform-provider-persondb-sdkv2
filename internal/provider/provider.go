@@ -30,10 +30,8 @@ func Provider() *schema.Provider {
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	var diags diag.Diagnostics
 	tflog.Info(ctx, "***** func providerConfigure *****")
-	c := &Client{
-		CustomDatabase: d.Get("database_filename").(string),
-	}
-	err := c.initDB()
+	databaseFilename := d.Get("database_filename").(string)
+	client, err := NewClient(databaseFilename)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -42,5 +40,5 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		})
 		return nil, diags
 	}
-	return c, diags
+	return client, diags
 }
