@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	personsdbclient "github.com/wim-vdw/terraform-provider-persondb/internal/client"
 )
 
 func resourcePerson() *schema.Resource {
@@ -39,11 +40,11 @@ func resourcePerson() *schema.Resource {
 func resourcePersonCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	tflog.Info(ctx, "***** func resourcePersonCreate *****")
-	client := m.(*Client)
+	client := m.(*personsdbclient.Client)
 	personID := d.Get("person_id").(string)
 	lastName := d.Get("last_name").(string)
 	firstName := d.Get("first_name").(string)
-	exists, err := client.checkPersonExists(personID)
+	exists, err := client.CheckPersonExists(personID)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -60,7 +61,7 @@ func resourcePersonCreate(ctx context.Context, d *schema.ResourceData, m interfa
 		})
 		return diags
 	}
-	err = client.createPerson(personID, lastName, firstName)
+	err = client.CreatePerson(personID, lastName, firstName)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -76,13 +77,13 @@ func resourcePersonCreate(ctx context.Context, d *schema.ResourceData, m interfa
 func resourcePersonRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	tflog.Info(ctx, "***** func resourcePersonRead *****")
-	client := m.(*Client)
+	client := m.(*personsdbclient.Client)
 	parts := strings.Split(d.Id(), "/")
 	if len(parts) != 3 || parts[1] != "person" {
 		return diag.Errorf("invalid ID format: expected '/person/<person_id>', got: %s", d.Id())
 	}
 	personID := parts[2]
-	lastName, firstName, err := client.readPerson(personID)
+	lastName, firstName, err := client.ReadPerson(personID)
 	if err != nil {
 		// Person could not be found, so we set the ID to empty
 		d.SetId("")
@@ -96,11 +97,11 @@ func resourcePersonRead(ctx context.Context, d *schema.ResourceData, m interface
 func resourcePersonUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	tflog.Info(ctx, "***** func resourcePersonUpdate *****")
-	client := m.(*Client)
+	client := m.(*personsdbclient.Client)
 	personID := d.Get("person_id").(string)
 	lastName := d.Get("last_name").(string)
 	firstName := d.Get("first_name").(string)
-	err := client.updatePerson(personID, lastName, firstName)
+	err := client.UpdatePerson(personID, lastName, firstName)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -115,9 +116,9 @@ func resourcePersonUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 func resourcePersonDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	tflog.Info(ctx, "***** func resourcePersonDelete *****")
-	client := m.(*Client)
+	client := m.(*personsdbclient.Client)
 	personID := d.Get("person_id").(string)
-	err := client.deletePerson(personID)
+	err := client.DeletePerson(personID)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
