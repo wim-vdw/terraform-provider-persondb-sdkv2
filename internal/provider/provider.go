@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	personsdbclient "github.com/wim-vdw/terraform-provider-persondb/internal/client"
+	persondbclient "github.com/wim-vdw/terraform-provider-persondb/internal/client"
 )
 
 func Provider() *schema.Provider {
@@ -32,7 +32,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	var diags diag.Diagnostics
 	tflog.Info(ctx, "***** func providerConfigure *****")
 	databaseFilename := d.Get("database_filename").(string)
-	client, err := personsdbclient.NewClient(databaseFilename)
+	client, err := persondbclient.NewClient(databaseFilename)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,

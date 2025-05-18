@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	personsdbclient "github.com/wim-vdw/terraform-provider-persondb/internal/client"
+	persondbclient "github.com/wim-vdw/terraform-provider-persondb/internal/client"
 )
 
 func resourcePerson() *schema.Resource {
@@ -40,7 +40,7 @@ func resourcePerson() *schema.Resource {
 func resourcePersonCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	tflog.Info(ctx, "***** func resourcePersonCreate *****")
-	client := m.(*personsdbclient.Client)
+	client := m.(*persondbclient.Client)
 	personID := d.Get("person_id").(string)
 	lastName := d.Get("last_name").(string)
 	firstName := d.Get("first_name").(string)
@@ -77,7 +77,7 @@ func resourcePersonCreate(ctx context.Context, d *schema.ResourceData, m interfa
 func resourcePersonRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	tflog.Info(ctx, "***** func resourcePersonRead *****")
-	client := m.(*personsdbclient.Client)
+	client := m.(*persondbclient.Client)
 	parts := strings.Split(d.Id(), "/")
 	if len(parts) != 3 || parts[1] != "person" {
 		return diag.Errorf("invalid ID format: expected '/person/<person_id>', got: %s", d.Id())
@@ -97,7 +97,7 @@ func resourcePersonRead(ctx context.Context, d *schema.ResourceData, m interface
 func resourcePersonUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	tflog.Info(ctx, "***** func resourcePersonUpdate *****")
-	client := m.(*personsdbclient.Client)
+	client := m.(*persondbclient.Client)
 	personID := d.Get("person_id").(string)
 	lastName := d.Get("last_name").(string)
 	firstName := d.Get("first_name").(string)
@@ -116,7 +116,7 @@ func resourcePersonUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 func resourcePersonDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	tflog.Info(ctx, "***** func resourcePersonDelete *****")
-	client := m.(*personsdbclient.Client)
+	client := m.(*persondbclient.Client)
 	personID := d.Get("person_id").(string)
 	err := client.DeletePerson(personID)
 	if err != nil {
