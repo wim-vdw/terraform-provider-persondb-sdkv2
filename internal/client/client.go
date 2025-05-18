@@ -1,4 +1,4 @@
-package provider
+package client
 
 import (
 	"database/sql"
@@ -42,7 +42,7 @@ func (c *Client) initDB() error {
 	return nil
 }
 
-func (c *Client) createPerson(personID, lastName, firstName string) error {
+func (c *Client) CreatePerson(personID, lastName, firstName string) error {
 	db, err := sql.Open("sqlite3", c.CustomDatabase)
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func (c *Client) createPerson(personID, lastName, firstName string) error {
 	return nil
 }
 
-func (c *Client) readPerson(personID string) (string, string, error) {
+func (c *Client) ReadPerson(personID string) (string, string, error) {
 	db, err := sql.Open("sqlite3", c.CustomDatabase)
 	if err != nil {
 		return "", "", err
@@ -69,7 +69,7 @@ func (c *Client) readPerson(personID string) (string, string, error) {
 	return lastName, firstName, nil
 }
 
-func (c *Client) updatePerson(personID, lastName, firstName string) error {
+func (c *Client) UpdatePerson(personID, lastName, firstName string) error {
 	db, err := sql.Open("sqlite3", c.CustomDatabase)
 	if err != nil {
 		return err
@@ -82,7 +82,7 @@ func (c *Client) updatePerson(personID, lastName, firstName string) error {
 	return nil
 }
 
-func (c *Client) deletePerson(personID string) error {
+func (c *Client) DeletePerson(personID string) error {
 	db, err := sql.Open("sqlite3", c.CustomDatabase)
 	if err != nil {
 		return err
@@ -102,7 +102,7 @@ func (c *Client) deletePerson(personID string) error {
 	return nil
 }
 
-func (c *Client) checkPersonExists(personID string) (bool, error) {
+func (c *Client) CheckPersonExists(personID string) (bool, error) {
 	db, err := sql.Open("sqlite3", c.CustomDatabase)
 	if err != nil {
 		return false, err

@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	personsdbclient "github.com/wim-vdw/terraform-provider-persondb/internal/client"
 )
 
 func dataSourcePerson() *schema.Resource {
@@ -31,9 +32,9 @@ func dataSourcePerson() *schema.Resource {
 func dataSourcePersonRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	tflog.Info(ctx, "***** func dataSourcePersonRead *****")
-	client := m.(*Client)
+	client := m.(*personsdbclient.Client)
 	personID := d.Get("person_id").(string)
-	lastName, firstName, err := client.readPerson(personID)
+	lastName, firstName, err := client.ReadPerson(personID)
 	if err != nil {
 		return diag.Errorf("unable to read person with person_id '%s' from the database", personID)
 	}
