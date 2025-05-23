@@ -64,7 +64,6 @@ resource "persondb_person" "wim" {
   last_name  = "Van den Wyngaert"
   first_name = "Wim"
 }
-
 ```
 
 Run the local development tests (data will be persisted in the SQLite database `persons.db`):
