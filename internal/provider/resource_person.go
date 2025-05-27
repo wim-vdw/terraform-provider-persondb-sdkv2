@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	persondbclient "github.com/wim-vdw/terraform-provider-persondb/internal/client"
 )
 
@@ -23,12 +24,14 @@ func resourcePerson() *schema.Resource {
 				ForceNew: true,
 			},
 			"last_name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringLenBetween(1, 30),
 			},
 			"first_name": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -71,6 +74,11 @@ func resourcePersonCreate(ctx context.Context, d *schema.ResourceData, m interfa
 		return diags
 	}
 	d.SetId("/person/" + personID)
+
+	// Best practice: Update state after modification
+	// https://developer.hashicorp.com/terraform/plugin/sdkv2/best-practices/detecting-drift#update-state-after-modification
+	resourcePersonRead(ctx, d, m)
+
 	return diags
 }
 
@@ -110,6 +118,11 @@ func resourcePersonUpdate(ctx context.Context, d *schema.ResourceData, m interfa
 		})
 		return diags
 	}
+
+	// Best practice: Update state after modification
+	// https://developer.hashicorp.com/terraform/plugin/sdkv2/best-practices/detecting-drift#update-state-after-modification
+	resourcePersonRead(ctx, d, m)
+
 	return diags
 }
 
